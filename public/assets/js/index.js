@@ -47,7 +47,7 @@ const deleteNote = (id) =>
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-    },
+    }
   });
 
 const renderActiveNote = () => {
@@ -84,6 +84,7 @@ const handleNoteDelete = (e) => {
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+  note.parentElement.remove();
 
   if (activeNote.id === noteId) {
     activeNote = {};
