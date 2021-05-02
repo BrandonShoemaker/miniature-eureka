@@ -1,20 +1,20 @@
 const { saveNote, deleteNoteById } = require('../../lib/notes.js');
-const { notes } = require('../../data/notes.json');
 const router = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const { response, json } = require('express');
 
 
 // returns active list of notes
 router.get('/notes', (req, res) => {
+    // promise typecast for file read
     const readFileAsync = util.promisify(fs.readFile);
+    // reads file for up to date list of notes
     readFileAsync(path.join(__dirname, '../../data/notes.json'))
     .then(data => {
-        let i = JSON.parse(data);
+        let notesList = JSON.parse(data);
 
-        res.json(i.notes);
+        res.json(notesList.notes);
     });    
 });
 
@@ -23,13 +23,14 @@ router.post('/notes', (req, res) => {
     const readFileAsync = util.promisify(fs.readFile);
     readFileAsync(path.join(__dirname, '../../data/notes.json'))
     .then(data => {
-        let i = JSON.parse(data);
-        if(i.notes)
-            req.body.id = i.notes.length.toString();
+        let notesList = JSON.parse(data);
+        // checks if notes are present for id assignment
+        if(notesList.notes)
+            req.body.id = notesList.notes.length.toString();
         else
             req.body.id = 0;
 
-        const note = saveNote(req.body, i.notes);
+        const note = saveNote(req.body, notesList.notes);
         res.json(note);
     }); 
 });
@@ -39,8 +40,8 @@ router.delete('/notes/:id', (req, res) => {
     const readFileAsync = util.promisify(fs.readFile);
     readFileAsync(path.join(__dirname, '../../data/notes.json'))
     .then(data => {
-        let i = JSON.parse(data);
-        const note = deleteNoteById(req.params.id, i.notes);
+        let notesList = JSON.parse(data);
+        const note = deleteNoteById(req.params.id, notesList.notes);
         res.json(note);
     });    
 });
