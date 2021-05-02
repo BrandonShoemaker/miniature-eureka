@@ -6,6 +6,7 @@ let tempNote;
 
 // returns active list of notes
 router.get('/notes', (req, res) => {
+    console.log(notes)
     res.json(notes);
 });
 
